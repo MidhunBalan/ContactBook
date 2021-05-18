@@ -1,15 +1,12 @@
-stages: 
-  -build 
-  -test
-  
-build: 
-  script: 
+build:
+  script:
     - "echo Building"
   stage: build
-
-test: 
-  script: 
+stages: "-build -test"
+test:
+  script:
     - "echo Tesing"
   stage: test
-  tags: 
+  tags:
     - ci
+
