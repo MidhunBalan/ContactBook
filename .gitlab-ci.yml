@@ -1,12 +1,21 @@
+stages:
+  - build
+  - test
+
 build:
-  script:
-    - "echo Building"
   stage: build
-stages: "-build -test"
-test:
   script:
-    - "echo Tesing"
+    - echo "Building"
+    - mkdir build
+    - touch build/info.txt
+  artifacts:
+    paths:
+      - build/
+
+test:
   stage: test
-  tags:
-    - ci
+  script:
+    - echo "Testing"
+    - test -f "build/info.txt"
+
 
