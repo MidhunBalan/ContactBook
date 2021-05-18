@@ -1,5 +1,11 @@
-demo_job_1:
-  script:
-    - "echo Hello World"
-  tags:
+build: 
+  script: 
+    - "echo Building"
+  stage: build
+stages: "-build -test"
+test: 
+  script: 
+    - "echo Tesing"
+  stage: test
+  tags: 
     - ci
