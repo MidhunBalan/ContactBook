@@ -1,8 +1,12 @@
+stages: 
+  -build 
+  -test
+  
 build: 
   script: 
     - "echo Building"
   stage: build
-stages: "-build -test"
+
 test: 
   script: 
     - "echo Tesing"
