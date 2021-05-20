@@ -1,7 +1,9 @@
 package com.contactbook.controller;
 
 import com.contactbook.constants.AppConstants;
+import com.contactbook.model.Account;
 import com.contactbook.model.Contact;
+import com.contactbook.model.AuthenticationModel;
 import com.contactbook.serivce.HelperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +18,13 @@ public class ContactController {
     HelperService helperService;
 
     @PostMapping("/login")
-    public boolean authenticateUser(@RequestBody Map userInfo) throws ExecutionException, InterruptedException {
-        return helperService.userAuthenticate(userInfo.get("username").toString(), userInfo.get("password").toString());
+    public boolean authenticateUser(@RequestBody AuthenticationModel authenticationModel) throws ExecutionException, InterruptedException {
+        return helperService.userAuthenticate(authenticationModel);
     }
 
     @PostMapping("/signup")
-    public Map<String, Object> signupUser(@RequestBody Contact contact) throws ExecutionException, InterruptedException {
-        return helperService.signupUser(contact);
+    public Map<String, Object> signupUser(@RequestBody AuthenticationModel authenticationModel) throws ExecutionException, InterruptedException {
+        return helperService.signupUser(authenticationModel);
     }
 
     @GetMapping("/getAllContacts")
@@ -36,9 +38,9 @@ public class ContactController {
         return helperService.getContactById(id);
     }
 
-    @PostMapping("/addContact")
-    public String addContact(@RequestBody Contact contact) {
-        helperService.saveNewContact(contact);
-        return contact.getContactKey();
+    @GetMapping("/getAllAccounts")
+    public List<Account> getAllAccounts() throws ExecutionException, InterruptedException {
+        List<Account> contactList = helperService.getAllAccounts();
+        return contactList;
     }
 }

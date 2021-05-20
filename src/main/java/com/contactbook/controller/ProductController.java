@@ -25,6 +25,11 @@ public class ProductController {
 
     @GetMapping("/getSuccess")
     public String getSuccessMessage() throws ExecutionException, InterruptedException {
-        return "Success data is returned";
+        return "success";
+    }
+
+    @GetMapping("/registerProducts")
+    public String registerAllProducts() throws ExecutionException, InterruptedException {
+        return productHelperService.registerAllProducts();
     }
 }

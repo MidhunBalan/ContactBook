@@ -1,37 +1,18 @@
 package com.contactbook.model;
 
-import com.google.cloud.firestore.annotation.DocumentId;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
-public class Contact {
-    @DocumentId
-    private String contactKey;
-    private Long createdDate;
-
+public class AuthenticationModel {
     private String firstName;
     private String lastName;
     private String emailId;
+    private String productId;
+    private String encryptedPassword;
     private String contactNumber;
     private Map<String, String> address;
-
-    public String getContactKey() {
-        return contactKey;
-    }
-
-    public void setContactKey(String contactKey) {
-        this.contactKey = contactKey;
-    }
-
-    public Long getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Long createdDate) {
-        this.createdDate = createdDate;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -55,6 +36,22 @@ public class Contact {
 
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
     }
 
     public String getContactNumber() {

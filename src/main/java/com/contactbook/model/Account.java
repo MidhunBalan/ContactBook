@@ -7,17 +7,21 @@ import java.util.Map;
 
 public class Account {
     @DocumentId
-    private String accountId;
+    private String accountId;   //PrimaryKey
     private Long createdDate;
-    private Long lastUpdate;
-
     private String firstName;
     private String lastName;
     private String emailId;
     private String companyName;
-    private Map<String, String> contactInformation;
+    private String contactKey;  // ForeignKey
+    private String linkedProduct;
+    private String encryptedPassword;
+    private String roleId;
+    private String roleType;
+    private List<String> loginType;
+    private Map<String, String> address;
     private Map<String, String> additionalInformation;
-    private String status;
+    private String accountStatus;
 
     public String getAccountId() {
         return accountId;
@@ -33,14 +37,6 @@ public class Account {
 
     public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public Long getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Long lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getFirstName() {
@@ -75,12 +71,60 @@ public class Account {
         this.companyName = companyName;
     }
 
-    public Map<String, String> getContactInformation() {
-        return contactInformation;
+    public String getContactKey() {
+        return contactKey;
     }
 
-    public void setContactInformation(Map<String, String> contactInformation) {
-        this.contactInformation = contactInformation;
+    public void setContactKey(String contactKey) {
+        this.contactKey = contactKey;
+    }
+
+    public String getLinkedProduct() {
+        return linkedProduct;
+    }
+
+    public void setLinkedProduct(String linkedProduct) {
+        this.linkedProduct = linkedProduct;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(String roleType) {
+        this.roleType = roleType;
+    }
+
+    public List<String> getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(List<String> loginType) {
+        this.loginType = loginType;
+    }
+
+    public Map<String, String> getAddress() {
+        return address;
+    }
+
+    public void setAddress(Map<String, String> address) {
+        this.address = address;
     }
 
     public Map<String, String> getAdditionalInformation() {
@@ -91,11 +135,11 @@ public class Account {
         this.additionalInformation = additionalInformation;
     }
 
-    public String getStatus() {
-        return status;
+    public String getAccountStatus() {
+        return accountStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }

@@ -1,8 +1,8 @@
 package com.contactbook.serivce;
 
-import com.contactbook.enums.LoginType;
 import com.contactbook.model.Account;
 import com.contactbook.model.Contact;
+import com.contactbook.model.AuthenticationModel;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.gson.Gson;
@@ -20,36 +20,42 @@ public class HelperService {
     @Autowired
     FirebaseInitializer firebaseDB;
 
+    @Autowired
+    AppUtils appUtils;
+
     Gson gson = new Gson();
 
-    public boolean userAuthenticate(String username, String password){
+    public boolean userAuthenticate(AuthenticationModel authenticationModel){
         boolean authenticate = false;
         try {
             ApiFuture<QuerySnapshot> future =
-                    firebaseDB.getFirebase().collection("Contact")
-                            .whereEqualTo("userName", username)
-                            .whereEqualTo("encryptedPassword", password)
+                    firebaseDB.getFirebase().collection("Account")
+                            .whereEqualTo("emailId", authenticationModel.getEmailId())
+                            .whereEqualTo("encryptedPassword", authenticationModel.getEncryptedPassword())
+                            .whereEqualTo("linkedProduct", authenticationModel.getProductId())
                             .get();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             for (DocumentSnapshot document : documents) {
                 authenticate = true;
-                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Contact.class)));
+                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Account.class)));
             }
         }catch (Exception e){
             System.out.println("Something went wrong"+e);
         }
         return authenticate;
     }
-    public Map<String, Object> signupUser(Contact contact){
+    public Map<String, Object> signupUser(AuthenticationModel authenticationModel){
+        System.out.println(gson.toJson(authenticationModel));
         Map<String, Object> response = new HashMap<>();
         try{
-            if(!contactAvailabilityCheck(contact.getEmailId())){
-                Contact savedContact = saveNewContact(contact);
+            if(!contactAvailabilityCheck(authenticationModel.getEmailId(), authenticationModel.getProductId())){
+                Contact savedContact = getSavedContact(authenticationModel);
+                System.out.println(gson.toJson("saved contact"));
                 if(savedContact.getContactKey() != null) {
-                    saveAccountInformation(savedContact, AppConstants.CONTACT_BOOK_PRODUCT_KEY);
-                    saveAccountInformation(savedContact, AppConstants.SHOP_AT_HEAVEN_PRODUCT_KEY);
+                    saveAccountInformation(savedContact, authenticationModel);
                     response.put("success", true);
                     response.put("msg", "user created");
+                    response.put("accessToken", "xyzToken");
                 }
             }else{
                 response.put("success", false);
@@ -58,25 +64,27 @@ public class HelperService {
         }catch (Exception e){
             System.out.println("something went wrong"+e);
         }
-
         return response;
     }
 
-    public boolean contactAvailabilityCheck(String emailId){
+    public boolean contactAvailabilityCheck(String emailId, String productId){
         boolean isPresent = false;
         try{
             ApiFuture<QuerySnapshot> future =
-                    firebaseDB.getFirebase().collection("Contact")
+                    firebaseDB.getFirebase().collection("Account")
                             .whereEqualTo("emailId", emailId)
+                            .whereEqualTo("linkedProduct", productId)
+                            .whereEqualTo("roleType", "OWNER")
                             .get();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             for (DocumentSnapshot document : documents) {
                 isPresent = true;
-                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Contact.class)));
+                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Account.class)));
             }
         }catch (Exception e){
             System.out.println("Something went wrong"+e);
         }
+        System.out.println("contact availability success");
        return isPresent;
     }
 
@@ -91,27 +99,69 @@ public class HelperService {
         });
         return contactList;
     }
-    public Contact saveNewContact(Contact contact) {
-        try {
-            List<String> products = getAvailableProducts();
-            contact.setProducts(products);
-            Map<String, String> addInfo = getAdditionalContactInfo();
-            contact.setContactInfo(addInfo);
-            contact.setCreatedDate(ZonedDateTime.now().toInstant().toEpochMilli());
-            List<String> loginType = getLoginType(LoginType.NORMAL.toString());
-            contact.setLoginType(loginType);
-            saveModel(contact);
-            return contact;
-        }catch(Exception e){
-            e.getMessage();
-        }
-        return null;
+
+    public List<Account> getAllAccounts() throws InterruptedException, ExecutionException {
+        List<Account> accountList = new ArrayList<>();
+        CollectionReference contacts = firebaseDB.getFirebase().collection("Account");
+        ApiFuture<QuerySnapshot> querySnapshot = contacts.get();
+
+        querySnapshot.get().getDocuments().forEach((doc)-> {
+            System.out.println(gson.toJson(doc));
+            accountList.add(doc.toObject(Account.class));
+        });
+        return accountList;
     }
-    public Contact saveAccountInformation(Contact contact, String productKey) {
+    public Contact getSavedContact(AuthenticationModel authenticationModel){
+        Contact contact = null;
+        try {
+            ApiFuture<QuerySnapshot> future =
+                    firebaseDB.getFirebase().collection("Contact")
+                            .whereEqualTo("emailId", authenticationModel.getEmailId())
+                            .get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                contact = document.toObject(Contact.class);
+                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Contact.class)));
+            }
+            if(contact == null){
+                contact = new Contact();
+                contact.setContactKey(appUtils.getRandomId());
+                contact.setEmailId(authenticationModel.getEmailId());
+                contact.setFirstName(authenticationModel.getFirstName());
+                contact.setLastName(authenticationModel.getLastName());
+                contact.setContactNumber(authenticationModel.getContactNumber());
+                contact.setAddress(authenticationModel.getAddress());
+                contact.setCreatedDate(ZonedDateTime.now().toInstant().toEpochMilli());
+                saveModel(contact);
+                System.out.println("new contact saved");
+            }
+        }catch(Exception e){
+            System.out.println("Something went wrong"+e);
+        }
+        return contact;
+    }
+
+    public Contact saveAccountInformation(Contact contact, AuthenticationModel authenticationModel) {
         try {
             Account account= new Account();
-            String accountId = contact.getContactKey().concat(productKey);
-            account.setAccountId(accountId);
+            account.setAccountId(appUtils.getRandomId());
+            account.setAccountStatus("ACTIVE");
+            account.setCreatedDate(ZonedDateTime.now().toInstant().toEpochMilli());
+            account.setFirstName(authenticationModel.getFirstName());
+            account.setLastName(authenticationModel.getLastName());
+            account.setEmailId(contact.getEmailId());
+            account.setCompanyName(authenticationModel.getFirstName());
+            account.setContactKey(contact.getContactKey());
+            account.setLinkedProduct(authenticationModel.getProductId());
+            account.setEncryptedPassword(authenticationModel.getEncryptedPassword());
+            account.setRoleId(null); // Need to handle this
+            account.setRoleType("OWNER"); // Need to handle this dynamically
+            List loginType = new ArrayList<>();
+            loginType.add("NORMAL");
+            account.setLoginType(loginType);
+            account.setAddress(authenticationModel.getAddress());
+            account.setAdditionalInformation(new HashMap<>());
+            account.setAccountStatus("ACTIVE");
             saveAccountModel(account);
             return contact;
         }catch(Exception e){
@@ -120,12 +170,10 @@ public class HelperService {
         return null;
     }
 
-    //Need to refactor this method to accept all type classes
     private void saveModel(Contact contact) {
         CollectionReference contactRef = firebaseDB.getFirebase().collection("Contact");
-        contactRef.document().set(contact);
+        contactRef.document(contact.getContactKey()).set(contact);
     }
-    //save db with custom id
     private void saveAccountModel(Account account) {
         CollectionReference contactRef = firebaseDB.getFirebase().collection("Account");
         contactRef.document(account.getAccountId()).set(account);
@@ -166,5 +214,14 @@ public class HelperService {
             System.out.println("Sorry something went wrong"+e);
         }
         return contact;
+    }
+
+    public Map<String, String> getAccountSubscription(Account account){
+        Map<String, String> subscription= new HashMap<>();
+        subscription.put("accountId", account.getAccountId());
+        subscription.put("planName", "FREE");
+        subscription.put("planId","4119");
+        subscription.put("feature","BASIC");
+        return subscription;
     }
 }
