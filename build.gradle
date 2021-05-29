@@ -35,6 +35,11 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.6'
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	compileOnly 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+	testCompileOnly 'org.projectlombok:lombok:1.18.20'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
 appengine {
