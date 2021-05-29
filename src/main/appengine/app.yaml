@@ -1,6 +1,7 @@
 runtime: java11
 env: standard
 service: api
+instance_class: F1
 runtime_config:
   jdk: openjdk11
 handlers:
