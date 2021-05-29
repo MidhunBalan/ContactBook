@@ -124,14 +124,15 @@ public class HelperService {
                 System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Contact.class)));
             }
             if(contact == null){
-                contact = new Contact();
-                contact.setContactKey(appUtils.getRandomId());
-                contact.setEmailId(authenticationModel.getEmailId());
-                contact.setFirstName(authenticationModel.getFirstName());
-                contact.setLastName(authenticationModel.getLastName());
-                contact.setContactNumber(authenticationModel.getContactNumber());
-                contact.setAddress(authenticationModel.getAddress());
-                contact.setCreatedDate(ZonedDateTime.now().toInstant().toEpochMilli());
+                contact = Contact.builder()
+                        .contactKey(appUtils.getRandomId())
+                        .emailId(authenticationModel.getEmailId())
+                        .firstName(authenticationModel.getFirstName())
+                        .lastName(authenticationModel.getLastName())
+                        .contactNumber(authenticationModel.getContactNumber())
+                        .address(authenticationModel.getAddress())
+                        .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
+                        .build();
                 saveModel(contact);
                 System.out.println("new contact saved");
             }
@@ -143,25 +144,26 @@ public class HelperService {
 
     public Contact saveAccountInformation(Contact contact, AuthenticationModel authenticationModel) {
         try {
-            Account account= new Account();
-            account.setAccountId(appUtils.getRandomId());
-            account.setAccountStatus("ACTIVE");
-            account.setCreatedDate(ZonedDateTime.now().toInstant().toEpochMilli());
-            account.setFirstName(authenticationModel.getFirstName());
-            account.setLastName(authenticationModel.getLastName());
-            account.setEmailId(contact.getEmailId());
-            account.setCompanyName(authenticationModel.getFirstName());
-            account.setContactKey(contact.getContactKey());
-            account.setLinkedProduct(authenticationModel.getProductId());
-            account.setEncryptedPassword(authenticationModel.getEncryptedPassword());
-            account.setRoleId(null); // Need to handle this
-            account.setRoleType("OWNER"); // Need to handle this dynamically
             List loginType = new ArrayList<>();
             loginType.add("NORMAL");
-            account.setLoginType(loginType);
-            account.setAddress(authenticationModel.getAddress());
-            account.setAdditionalInformation(new HashMap<>());
-            account.setAccountStatus("ACTIVE");
+            Account account= Account.builder()
+                    .accountId(appUtils.getRandomId())
+                    .accountStatus("ACTIVE")
+                    .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
+                    .firstName(authenticationModel.getFirstName())
+                    .lastName(authenticationModel.getLastName())
+                    .emailId(contact.getEmailId())
+                    .companyName(authenticationModel.getFirstName())
+                    .contactKey(contact.getContactKey())
+                    .linkedProduct(authenticationModel.getProductId())
+                    .encryptedPassword(authenticationModel.getEncryptedPassword())
+                    .roleId(null)
+                    .roleType("OWNER")
+                    .loginType(loginType)
+                    .address(authenticationModel.getAddress())
+                    .additionalInformation(new HashMap<>())
+                    .accountStatus("ACTIVE")
+                    .build();
             saveAccountModel(account);
             return contact;
         }catch(Exception e){

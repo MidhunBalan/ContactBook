@@ -1,6 +1,7 @@
 package com.contactbook.model;
 
 import com.google.cloud.firestore.annotation.DocumentId;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@Builder
 public class Account {
     @DocumentId
     private String accountId;   //PrimaryKey
