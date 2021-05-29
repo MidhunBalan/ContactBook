@@ -25,3 +25,8 @@ To redownload the dependencies
 To set default project 
 
 ```gcloud config set project {projected}```
+
+##Linked Contact Mapping
+```LINKED_CONTACTS:
+customerKey -> [product_id_two, product_id_one] -> [contact_id_two,product_id] -> status
+```

@@ -32,7 +32,7 @@ public class FirebaseInitializer {
     @PostConstruct
     private void initLocalDB() throws IOException {
         InputStream serviceAccount = this.getClass().getClassLoader()
-                .getResourceAsStream("./contactbook-localhost.json");
+                .getResourceAsStream("./contact-book-localhost.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
