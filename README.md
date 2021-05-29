@@ -3,7 +3,7 @@
 ## Gradle project
 
 To deploy app engine project
-gradle appengineDeploy
+```gradle appengineDeploy```
 
 To build gradle
 gradle build
