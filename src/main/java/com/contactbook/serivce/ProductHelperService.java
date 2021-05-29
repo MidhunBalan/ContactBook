@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +20,9 @@ public class ProductHelperService {
     @Autowired
     FirebaseInitializer db;
     Gson gson = new Gson();
+
+    @Autowired
+    AppUtils appUtils;
 
     public List<Products> getAllProducts() throws InterruptedException, ExecutionException {
         List<Products> productsList = new ArrayList<>();
@@ -48,5 +52,9 @@ public class ProductHelperService {
     private void saveProduct(Products products) {
         CollectionReference contactRef = db.getFirebase().collection("Products");
         contactRef.document(products.getProductId()).set(products);
+    }
+
+    public String requestedUrl(HttpServletRequest request){
+        return appUtils.requestUrlValidation(request);
     }
 }

@@ -17,7 +17,7 @@ public class ContactController {
     @Autowired
     HelperService helperService;
 
-    @PostMapping("/login")
+    @PostMapping("/authenticate")
     public boolean authenticateUser(@RequestBody AuthenticationModel authenticationModel) throws ExecutionException, InterruptedException {
         return helperService.userAuthenticate(authenticationModel);
     }
