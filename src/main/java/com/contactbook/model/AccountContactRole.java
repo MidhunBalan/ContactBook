@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Component
 public class AccountContactRole {
     @DocumentId
     private String id;

@@ -8,7 +8,6 @@ import java.util.Map;
 
 @Getter
 @Setter
-@Component
 public class AuthenticationModel {
     private String firstName;
     private String lastName;

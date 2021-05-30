@@ -1,17 +1,18 @@
 package com.contactbook.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.cloud.firestore.annotation.DocumentId;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@Component
 public class Contact {
     @DocumentId
     private String contactKey;
@@ -22,5 +23,4 @@ public class Contact {
     private String emailId;
     private String contactNumber;
     private Map<String, String> address;
-
 }
