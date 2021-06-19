@@ -43,4 +43,9 @@ public class ContactController {
         List<Account> contactList = helperService.getAllAccounts();
         return contactList;
     }
+
+    @GetMapping("/getContact/username")
+    public Account getContactByUserName(@RequestParam("username") String username, @RequestParam("productId") String productId) {
+        return helperService.getUserAccountByProductId(username,productId);
+    }
 }

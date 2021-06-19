@@ -226,4 +226,28 @@ public class HelperService {
         subscription.put("feature","BASIC");
         return subscription;
     }
+
+    public Account getUserAccountByProductId(String username, String productId) {
+
+        Account account = null;
+
+        try{
+
+            ApiFuture<QuerySnapshot> future =
+                    firebaseDB.getFirebase().collection("Account")
+                            .whereEqualTo("emailId", username)
+                            .whereEqualTo("linkedProduct", productId)
+                            .get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                account = document.toObject(Account.class);
+            }
+
+            return account;
+
+        }catch (Exception e){
+            System.out.println("Something went wrong"+e);
+            return account;
+        }
+    }
 }
