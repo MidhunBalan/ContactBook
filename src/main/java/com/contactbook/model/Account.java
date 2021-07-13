@@ -21,7 +21,6 @@ public class Account {
     private String companyName;
     private String contactKey;  // ForeignKey
     private String linkedProduct;
-    private String encryptedPassword;
     private String roleId;
     private String roleType;
     private List<String> loginType;

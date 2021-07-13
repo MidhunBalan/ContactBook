@@ -45,7 +45,7 @@ dependencies {
 appengine {
 	deploy {
 		projectId = "contactbook-live"
-		version = '00001'
+		version = '00002'
 		promote = false
 	}
 }

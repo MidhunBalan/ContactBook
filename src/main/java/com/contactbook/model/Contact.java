@@ -21,6 +21,7 @@ public class Contact {
     private String firstName;
     private String lastName;
     private String emailId;
+    private String encryptedPassword;
     private String contactNumber;
     private Map<String, String> address;
 }

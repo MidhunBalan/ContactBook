@@ -132,6 +132,7 @@ public class HelperService {
                         .contactNumber(authenticationModel.getContactNumber())
                         .address(authenticationModel.getAddress())
                         .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
+                        .encryptedPassword(authenticationModel.getEncryptedPassword())
                         .build();
                 saveModel(contact);
                 System.out.println("new contact saved");
@@ -156,7 +157,6 @@ public class HelperService {
                     .companyName(authenticationModel.getFirstName())
                     .contactKey(contact.getContactKey())
                     .linkedProduct(authenticationModel.getProductId())
-                    .encryptedPassword(authenticationModel.getEncryptedPassword())
                     .roleId(null)
                     .roleType("OWNER")
                     .loginType(loginType)
