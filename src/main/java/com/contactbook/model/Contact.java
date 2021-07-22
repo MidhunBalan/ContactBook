@@ -1,10 +1,7 @@
 package com.contactbook.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.cloud.firestore.annotation.DocumentId;
 import lombok.*;
-import lombok.extern.jackson.Jacksonized;
 
 import java.util.Map;
 
@@ -20,8 +17,8 @@ public class Contact {
 
     private String firstName;
     private String lastName;
-    private String emailId;
-    private String encryptedPassword;
+    private String username;
+    private String password;
     private String contactNumber;
     private Map<String, String> address;
 }

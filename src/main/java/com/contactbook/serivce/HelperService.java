@@ -1,8 +1,9 @@
 package com.contactbook.serivce;
 
+import com.contactbook.constants.AppConstants;
 import com.contactbook.model.Account;
-import com.contactbook.model.Contact;
 import com.contactbook.model.AuthenticationModel;
+import com.contactbook.model.Contact;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.gson.Gson;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import com.contactbook.constants.AppConstants;
 
 
 @Service
@@ -30,25 +33,43 @@ public class HelperService {
         try {
             ApiFuture<QuerySnapshot> future =
                     firebaseDB.getFirebase().collection("Account")
-                            .whereEqualTo("emailId", authenticationModel.getEmailId())
-                            .whereEqualTo("encryptedPassword", authenticationModel.getEncryptedPassword())
+                            .whereEqualTo("emailId", authenticationModel.getUsername())
+                            .whereEqualTo("encryptedPassword", authenticationModel.getPassword())
                             .whereEqualTo("linkedProduct", authenticationModel.getProductId())
                             .get();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             for (DocumentSnapshot document : documents) {
                 authenticate = true;
-                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Account.class)));
+                System.out.println(document.getId() + " => " + gson.toJson(document.toObject(Contact.class)));
             }
         }catch (Exception e){
             System.out.println("Something went wrong"+e);
         }
         return authenticate;
     }
+    public Contact fetchUserByUsername(AuthenticationModel authenticationModel){
+        Contact contact = null;
+        try {
+            ApiFuture<QuerySnapshot> future =
+                    firebaseDB.getFirebase().collection("Contact")
+                            .whereEqualTo("username", authenticationModel.getUsername())
+                            .get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                contact = document.toObject(Contact.class);
+                System.out.println(document.getId() + " => " + gson.toJson(contact));
+            }
+            return contact;
+        }catch (Exception e){
+            System.out.println("Something went wrong"+e);
+        }
+        return contact;
+    }
     public Map<String, Object> signupUser(AuthenticationModel authenticationModel){
         System.out.println(gson.toJson(authenticationModel));
         Map<String, Object> response = new HashMap<>();
         try{
-            if(!contactAvailabilityCheck(authenticationModel.getEmailId(), authenticationModel.getProductId())){
+            if(!contactAvailabilityCheck(authenticationModel.getUsername(), authenticationModel.getProductId())){
                 Contact savedContact = getSavedContact(authenticationModel);
                 System.out.println(gson.toJson("saved contact"));
                 if(savedContact.getContactKey() != null) {
@@ -116,7 +137,7 @@ public class HelperService {
         try {
             ApiFuture<QuerySnapshot> future =
                     firebaseDB.getFirebase().collection("Contact")
-                            .whereEqualTo("emailId", authenticationModel.getEmailId())
+                            .whereEqualTo("emailId", authenticationModel.getUsername())
                             .get();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             for (DocumentSnapshot document : documents) {
@@ -126,13 +147,13 @@ public class HelperService {
             if(contact == null){
                 contact = Contact.builder()
                         .contactKey(appUtils.getRandomId())
-                        .emailId(authenticationModel.getEmailId())
+                        .username(authenticationModel.getUsername())
                         .firstName(authenticationModel.getFirstName())
                         .lastName(authenticationModel.getLastName())
                         .contactNumber(authenticationModel.getContactNumber())
                         .address(authenticationModel.getAddress())
                         .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
-                        .encryptedPassword(authenticationModel.getEncryptedPassword())
+                        .password(authenticationModel.getPassword())
                         .build();
                 saveModel(contact);
                 System.out.println("new contact saved");
@@ -153,7 +174,7 @@ public class HelperService {
                     .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
                     .firstName(authenticationModel.getFirstName())
                     .lastName(authenticationModel.getLastName())
-                    .emailId(contact.getEmailId())
+                    .emailId(contact.getUsername())
                     .companyName(authenticationModel.getFirstName())
                     .contactKey(contact.getContactKey())
                     .linkedProduct(authenticationModel.getProductId())

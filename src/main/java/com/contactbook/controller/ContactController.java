@@ -27,6 +27,11 @@ public class ContactController {
         return helperService.signupUser(authenticationModel);
     }
 
+    @PostMapping("/fetchBy/username")
+    public Contact fetchByUsername(@RequestBody AuthenticationModel authenticationModel) throws ExecutionException, InterruptedException {
+        return helperService.fetchUserByUsername(authenticationModel);
+    }
+
     @GetMapping("/getAllContacts")
     public List<Contact> getAllContacts() throws ExecutionException, InterruptedException {
         List<Contact> contactList = helperService.getContactList();
