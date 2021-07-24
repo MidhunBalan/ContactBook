@@ -21,8 +21,8 @@ public class JwtTokenProvider {
 
     //Generate the token
 
-    public String generateToken(Authentication authentication){
-        User user = (User)authentication.getPrincipal();
+    public String generateToken(Authentication authentication, boolean signupFlow, User createdUser){
+        User user = !signupFlow ? (User)authentication.getPrincipal(): createdUser;
         System.out.println(new Gson().toJson(user));
         Date now = new Date(System.currentTimeMillis());
 
@@ -31,9 +31,9 @@ public class JwtTokenProvider {
         String userId = user.getKey();
 
         Map<String,Object> claims = new HashMap<>();
-        claims.put("id", user.getKey());
-        claims.put("username", user.getUsername());
-        claims.put("fullName", user.getFirstName());
+        claims.put("key", user.getKey());
+        claims.put("start", now);
+        claims.put("exp", now.getTime()+EXPIRATION_TIME);
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET);

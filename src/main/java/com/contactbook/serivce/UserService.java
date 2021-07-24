@@ -52,12 +52,13 @@ public class UserService {
                 .createdDate(ZonedDateTime.now().toInstant().toEpochMilli())
                 .password(bCryptPasswordEncoder.encode(newUser.getPassword()))
                 .build();
-            saveModel(user);
-            return newUser;
+            return saveModel(user);
+
     }
-    private void saveModel(User user) {
+    private User saveModel(User user) {
         CollectionReference userRef = firebaseDB.getFirebase().collection("User");
         userRef.document(user.getKey()).set(user);
+        return user;
     }
     User findByUsername(String username){
         User user = null;
@@ -92,15 +93,21 @@ public class UserService {
 
     }
 
-    public String tokenGenerator(AuthenticationModel authenticationModel) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationModel.getUsername(),
-                        authenticationModel.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = TOKEN_PREFIX +  tokenProvider.generateToken(authentication);
-        return jwt;
+    public String tokenGenerator(AuthenticationModel authenticationModel, boolean signUpFlow, User user) {
+
+        if(!signUpFlow) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationModel.getUsername(),
+                            authenticationModel.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = TOKEN_PREFIX +  tokenProvider.generateToken(authentication, false, user);
+            return jwt;
+        }else{
+            String jwt = TOKEN_PREFIX +  tokenProvider.generateToken(null, true, user);
+            return jwt;
+        }
     }
 }

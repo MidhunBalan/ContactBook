@@ -6,7 +6,6 @@ import com.contactbook.model.User;
 import com.contactbook.security.JwtTokenProvider;
 import com.contactbook.serivce.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.validation.BindingResult;
@@ -30,13 +29,20 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@RequestBody User user, BindingResult result){
         User newUser = userService.saveUser(user);
-        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
+        String jwt = generateTokenForNewUser(newUser);
+        return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
+//        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
+    }
+
+    private String generateTokenForNewUser(User newUser) {
+        String jwt = userService.tokenGenerator(null, true, newUser);
+        return jwt;
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationModel authenticationModel, BindingResult result){
-        String jwt = userService.tokenGenerator(authenticationModel);
+        String jwt = userService.tokenGenerator(authenticationModel, false, null);
         return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
     }
 }
