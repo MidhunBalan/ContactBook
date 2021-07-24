@@ -1,8 +1,8 @@
 package com.contactbook.controller;
 
 import com.contactbook.constants.AppConstants;
-import com.contactbook.model.Products;
-import com.contactbook.serivce.ProductHelperService;
+import com.contactbook.model.App;
+import com.contactbook.serivce.AppHelperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +14,13 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping(AppConstants.VERSION)
-public class ProductController {
+public class AppController {
     @Autowired
-    ProductHelperService productHelperService;
+    AppHelperService appHelperService;
 
     @GetMapping("/getAllProducts")
-    public List<Products> getAllProducts() throws ExecutionException, InterruptedException {
-        List<Products> contactList = productHelperService.getAllProducts();
+    public List<App> getAllProducts() throws ExecutionException, InterruptedException {
+        List<App> contactList = appHelperService.getAllProducts();
         return contactList;
     }
 
@@ -31,11 +31,11 @@ public class ProductController {
 
     @GetMapping("/registerProducts")
     public String registerAllProducts() throws ExecutionException, InterruptedException {
-        return productHelperService.registerAllProducts();
+        return appHelperService.registerAllProducts();
     }
 
     @GetMapping("/getRequestedUrl")
     public String registerRequestedURL(HttpServletRequest request) throws ExecutionException, InterruptedException {
-        return productHelperService.requestedUrl(request);
+        return appHelperService.requestedUrl(request);
     }
 }

@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Products {
+public class App {
     @DocumentId
-    private String productId;
-    private String productName;
+    private String key;
+    private String name;
 }
