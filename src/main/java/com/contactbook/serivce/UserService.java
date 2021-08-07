@@ -110,4 +110,9 @@ public class UserService {
             return jwt;
         }
     }
+
+    public String generateTokenForNewUser(User newUser) {
+        String jwt = userService.tokenGenerator(null, true, newUser);
+        return jwt;
+    }
 }
